@@ -3,13 +3,15 @@
   "private": true,
   "description": "Death By Audio dealer locator",
   "scripts": {
-    "geocode": "node scripts/geocode.js",
-    "start": "npx --yes serve -l 8080 ."
+    "start": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "geocode": "node scripts/geocode.js"
   },
   "devDependencies": {
     "all-the-cities": "^3.1.0",
     "i18n-iso-countries": "^7.14.0",
     "papaparse": "^5.4.1",
+    "wrangler": "^4.153.0",
     "zipcodes": "^8.0.0"
   }
 }

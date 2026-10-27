@@ -2,7 +2,7 @@
 // Fills in latitude/longitude for every store in a StoreMapper-style CSV, offline.
 //
 //   npm install
-//   npm run geocode -- path/to/export.csv            # writes data/stores.csv
+//   npm run geocode -- path/to/export.csv            # writes public/data/stores.csv
 //
 // Rows that already have coordinates are kept as-is. Otherwise:
 //   1. US ZIP / Canadian postal code -> postal-code centroid
@@ -19,7 +19,7 @@ const cities = require("all-the-cities");
 const countries = require("i18n-iso-countries");
 countries.registerLocale(require("i18n-iso-countries/langs/en.json"));
 
-const [input, output = path.join(__dirname, "..", "data", "stores.csv")] = process.argv.slice(2);
+const [input, output = path.join(__dirname, "..", "public", "data", "stores.csv")] = process.argv.slice(2);
 if (!input) {
   console.error("Usage: npm run geocode -- <input.csv> [output.csv]");
   process.exit(1);
