@@ -18,23 +18,17 @@ npm start            # wrangler dev, serves public/ at http://localhost:8787
 
 ## Deployment (Cloudflare Workers)
 
-`.github/workflows/deploy.yml` deploys automatically:
+The site is live at https://storefinder.deathbyaudiocustom.workers.dev/.
 
-- **Push to `main`** → deploys to Cloudflare (`wrangler deploy`, config in `wrangler.jsonc`).
-- **Pull request** → checks that it would deploy (`wrangler deploy --dry-run`), without publishing.
-- It can also be run by hand from the repo's **Actions** tab.
+Cloudflare Workers Builds is connected to this repo: **every push to `main` deploys automatically**
+(it runs `npx wrangler deploy` using `wrangler.jsonc`). Build logs are in the Cloudflare dashboard under
+Workers & Pages → `storefinder` → Deployments.
 
-One-time setup, in the GitHub repo under **Settings → Secrets and variables → Actions**, add:
+`.github/workflows/check.yml` runs on pushes and pull requests to check the change would deploy cleanly
+(`wrangler deploy --dry-run`); it doesn't publish anything.
 
-| Secret | Where to get it |
-| --- | --- |
-| `CLOUDFLARE_API_TOKEN` | Cloudflare dashboard → My Profile → API Tokens → Create Token → "Edit Cloudflare Workers" template |
-| `CLOUDFLARE_ACCOUNT_ID` | Cloudflare dashboard → Workers & Pages → Account ID (right-hand side) |
-
-After the first deploy the site is live at `https://dba-storefinder.<your-subdomain>.workers.dev`. To use your
-own domain, add it under the Worker's **Settings → Domains & Routes** in the Cloudflare dashboard.
-
-To deploy by hand instead: `npx wrangler login` then `npm run deploy`.
+To use your own domain, add it under the Worker's **Settings → Domains & Routes** in the Cloudflare dashboard.
+To deploy by hand: `npx wrangler login` then `npm run deploy`.
 
 ## Updating the store list
 

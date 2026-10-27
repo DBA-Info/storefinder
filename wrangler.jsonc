@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "dba-storefinder",
+  "name": "storefinder",
   "compatibility_date": "2026-10-01",
   // Static site only: everything in public/ is served as-is.
   "assets": {

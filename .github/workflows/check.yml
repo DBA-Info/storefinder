@@ -1,0 +1,28 @@
+name: Check
+
+# Cloudflare Workers Builds deploys the site on every push to main.
+# This workflow only checks that a change would deploy cleanly.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Check JavaScript syntax
+        run: node --check public/app.js && node --check scripts/geocode.js
+
+      - name: Check deploy (no upload)
+        run: npx wrangler deploy --dry-run
