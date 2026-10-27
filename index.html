@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Death By Audio Dealer Locator</title>
+  <meta name="description" content="Find a store near you that carries Death By Audio pedals and merchandise.">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <h1>Death By Audio <span>Dealer Locator</span></h1>
+    <p class="tagline">Find a shop near you that carries Death By Audio gear.</p>
+  </header>
+
+  <main class="layout">
+    <section class="panel">
+      <form id="search-form" class="search" autocomplete="off">
+        <label for="query" class="visually-hidden">City, address, or postal code</label>
+        <input id="query" type="search" placeholder="City, address, or ZIP / postal code" required>
+        <button type="submit">Search</button>
+      </form>
+      <div class="search-extras">
+        <button id="locate" type="button" class="link-button">Use my location</button>
+        <label>
+          Within
+          <select id="radius">
+            <option value="25">25 mi</option>
+            <option value="50">50 mi</option>
+            <option value="100" selected>100 mi</option>
+            <option value="250">250 mi</option>
+            <option value="Infinity">Any distance</option>
+          </select>
+        </label>
+      </div>
+      <p id="status" class="status" role="status" aria-live="polite">Loading stores…</p>
+      <ol id="results" class="results"></ol>
+    </section>
+
+    <section class="map-wrap" aria-label="Map of stores">
+      <div id="map"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>Don't see a shop near you? Buy direct at <a href="https://www.deathbyaudio.com" target="_blank" rel="noopener">deathbyaudio.com</a>.</p>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
