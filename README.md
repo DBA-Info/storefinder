@@ -57,7 +57,8 @@ Header names are matched loosely (case and punctuation don't matter). Recognized
 
 ## How search works
 
-The visitor's search text is turned into coordinates with OpenStreetMap's free
+US ZIP codes and Canadian postal codes are looked up on the site itself from `public/data/postal.json`
+(rebuild with `npm run build-postal`). Everything else (city names, addresses, other countries' postal codes) is turned into coordinates with OpenStreetMap's free
 [Nominatim](https://nominatim.org/) service, then stores are sorted by straight-line distance. Map tiles
 come from OpenStreetMap. Both are fine for a low-traffic site; if traffic grows, switch to a paid
 geocoding/tile provider by changing `GEOCODE_URL` and the tile layer in `public/app.js`.

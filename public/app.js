@@ -3,6 +3,7 @@
 // OpenStreetMap Nominatim, and lists stores sorted by distance.
 
 const CSV_URL = "data/stores.csv";
+const POSTAL_URL = "data/postal.json";
 const GEOCODE_URL = "https://nominatim.openstreetmap.org/search";
 
 // Accepted header names for each field (compared lowercase, ignoring spaces/punctuation).
@@ -219,7 +220,23 @@ function textMatches(q) {
   return stores.filter((s) => s.lat === null && [s.name, fullAddress(s)].join(" ").toLowerCase().includes(needle));
 }
 
+// US ZIP codes and Canadian postal codes are looked up locally (data/postal.json):
+// free-text geocoders often mismatch a bare number like "11201" to another country.
+let postalTable = null;
+async function postalLookup(q) {
+  const t = q.trim().toUpperCase();
+  const us = t.match(/^(\d{5})(?:-\d{4})?$/);
+  const ca = t.match(/^([A-Z]\d[A-Z])(?:\s?\d[A-Z]\d)?$/);
+  const key = us ? us[1] : ca ? ca[1] : null;
+  if (!key) return null;
+  postalTable = postalTable || fetch(POSTAL_URL).then((r) => (r.ok ? r.json() : {})).catch(() => ({}));
+  const hit = (await postalTable)[key];
+  return hit ? { lat: hit[0], lng: hit[1], label: `${q.trim()} (${hit[2]})` } : null;
+}
+
 async function geocode(q) {
+  const local = await postalLookup(q);
+  if (local) return local;
   const url = `${GEOCODE_URL}?format=json&limit=1&q=${encodeURIComponent(q)}`;
   const res = await fetch(url, { headers: { Accept: "application/json" } });
   if (!res.ok) throw new Error("Location lookup failed");
