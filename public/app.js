@@ -234,15 +234,36 @@ async function postalLookup(q) {
   return hit ? { lat: hit[0], lng: hit[1], label: `${q.trim()} (${hit[2]})` } : null;
 }
 
+// The visitor's country from their browser language (e.g. "en-US" -> "us"), if it has one.
+function browserCountry() {
+  for (const lang of navigator.languages || [navigator.language]) {
+    const m = /-([a-z]{2})$/i.exec(lang || "");
+    if (m) return m[1].toLowerCase();
+  }
+  return null;
+}
+
+async function nominatim(q, countrycodes) {
+  const params = new URLSearchParams({ format: "json", limit: "1", q });
+  if (countrycodes) params.set("countrycodes", countrycodes);
+  const res = await fetch(`${GEOCODE_URL}?${params}`, { headers: { Accept: "application/json" } });
+  if (!res.ok) throw new Error("Location lookup failed");
+  const [hit] = await res.json();
+  return hit || null;
+}
+
 async function geocode(q) {
   const local = await postalLookup(q);
   if (local) return local;
-  const url = `${GEOCODE_URL}?format=json&limit=1&q=${encodeURIComponent(q)}`;
-  const res = await fetch(url, { headers: { Accept: "application/json" } });
-  if (!res.ok) throw new Error("Location lookup failed");
-  const [hit] = await res.json();
+  // A bare number is ambiguous worldwide (22405 is a ZIP in Virginia and a postcode in South Korea),
+  // so look in the visitor's own country first.
+  const country = /^[\d\s-]+$/.test(q) ? browserCountry() : null;
+  const hit = (country && (await nominatim(q, country))) || (await nominatim(q));
   if (!hit) return null;
-  return { lat: parseFloat(hit.lat), lng: parseFloat(hit.lon), label: q };
+  // Show where the search landed, e.g. "22405 (Fredericksburg, United States)", so a bad match is obvious.
+  const parts = String(hit.display_name || "").split(", ");
+  const place = parts.length > 1 ? `${parts[0]}, ${parts[parts.length - 1]}` : parts[0];
+  return { lat: parseFloat(hit.lat), lng: parseFloat(hit.lon), label: place && place !== q ? `${q} (${place})` : q };
 }
 
 els.form.addEventListener("submit", async (e) => {
